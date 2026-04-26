@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-dm: "DM Sans", sans-serif;
+  --font-mono: "Space Mono", monospace;
+  --color-dark: #080808;
+  --color-light: #F5F5F0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-family: var(--font-dm);
+  /* Hide default cursor to use custom cursor */
+  cursor: none;
+  overflow-x: hidden;
+}
+
+a, button {
+  cursor: none;
+}
+
+/* Subtle Grain Overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+}
+
+/* Loader transition */
+.loader-exit {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+}
