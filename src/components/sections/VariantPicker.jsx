@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
 export function VariantPicker() {
-  const { variants, activeVariant, setVariant, cameraPos, shoeY } = useStore()
+  const { variants, activeVariant, setVariant, cameraPos, shoeY, addToCart } = useStore()
   const activeObj = variants[activeVariant]
   const containerRef = useRef(null)
 
@@ -42,8 +42,8 @@ export function VariantPicker() {
 
     // Animate text out and in
     gsap.fromTo('.variant-text', 
-      { clipPath: 'inset(100% 0 0 0)' },
-      { clipPath: 'inset(0% 0 0 0)', duration: 0.6, ease: 'power3.out' }
+      { opacity: 0, y: 20, filter: 'blur(10px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, ease: 'expo.out' }
     )
     
     setVariant(index)
@@ -53,36 +53,51 @@ export function VariantPicker() {
     <section ref={containerRef} className="relative w-full h-screen flex items-center px-[5%] md:px-[10%]">
       {/* Left Text */}
       <div className="w-1/2 z-10 pointer-events-none">
-        <p className="font-mono text-sm tracking-widest text-[#FF4500] mb-4">COLORWAY</p>
-        <div className="w-12 h-px bg-white/30 mb-8" />
+        <p className="font-mono text-[10px] tracking-[0.4em] text-[#FF4500] mb-6 uppercase">CUSTOMIZATION HUB</p>
+        <div className="w-16 h-[2px] bg-white/10 mb-10" />
         
         <div className="variant-text">
-          <h2 className="font-bebas text-5xl md:text-7xl mb-4">{activeObj.name}</h2>
-          <p className="font-mono text-white/60 mb-6 italic">
-            {activeVariant === 0 && '"Born in the dark."'}
-            {activeVariant === 1 && '"Pure. Clean. Classic."'}
-            {activeVariant === 2 && '"Heat on your feet."'}
+          <h2 className="font-outfit text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-none">{activeObj.name}</h2>
+          <p className="font-inter text-white/40 mb-10 italic text-lg max-w-sm leading-relaxed">
+            {activeVariant === 0 && '"A bold statement for the midnight urban explorer."'}
+            {activeVariant === 1 && '"Timeless purity that defines a generation."'}
+            {activeVariant === 2 && '"Ignite the pavement with crimson intensity."'}
           </p>
-          <p className="font-mono text-xl mb-8">$180 USD</p>
-          <button className="px-8 py-3 bg-white text-black font-bold font-mono text-sm tracking-widest hover:bg-[#FF4500] hover:text-white transition-colors pointer-events-auto cursor-pointer">
-            ADD TO CART
+          <div className="flex items-center gap-8 mb-12">
+            <span className="font-outfit text-3xl font-bold tracking-tight text-[#FF4500]">$180.00</span>
+            <div className="w-px h-8 bg-white/10" />
+            <span className="font-mono text-[10px] tracking-widest uppercase opacity-40">INSTOCK // LIMITED EDITION</span>
+          </div>
+          
+          <button 
+            onClick={() => addToCart({ index: activeVariant, name: activeObj.name })}
+            data-cursor="ADD"
+            className="px-10 py-5 bg-white text-black font-outfit font-black text-xs tracking-[0.3em] hover:bg-[#FF4500] hover:text-white transition-all duration-500 pointer-events-auto cursor-pointer rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
+          >
+            ADD TO COLLECTION
           </button>
         </div>
       </div>
 
       {/* Right Swatches */}
-      <div className="absolute right-[10%] top-1/2 -translate-y-1/2 flex flex-col gap-6 z-10">
+      <div className="absolute right-[5%] md:right-[10%] top-1/2 -translate-y-1/2 flex flex-col gap-8 z-10">
         {variants.map((v, i) => (
           <div 
             key={v.name}
             onClick={() => handleVariantChange(i)}
-            className="swatch flex items-center gap-4 cursor-pointer group"
+            data-cursor="SELECT"
+            className="swatch flex items-center gap-6 cursor-pointer group pointer-events-auto"
           >
-            <div 
-              className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${activeVariant === i ? 'border-white scale-125' : 'border-transparent scale-100'}`}
-              style={{ backgroundColor: v.color, boxShadow: activeVariant === i ? `0 0 15px ${v.accent}` : 'none' }}
-            />
-            <span className={`font-mono text-sm tracking-widest transition-colors ${activeVariant === i ? 'text-white' : 'text-white/40 group-hover:text-white/80'}`}>
+            <div className="relative">
+              <div 
+                className={`w-10 h-10 rounded-full border-2 transition-all duration-500 ${activeVariant === i ? 'border-white scale-125' : 'border-transparent scale-100 group-hover:scale-110'}`}
+                style={{ backgroundColor: v.color, boxShadow: activeVariant === i ? `0 0 30px ${v.color}66` : 'none' }}
+              />
+              {activeVariant === i && (
+                <div className="absolute inset-0 rounded-full border border-white animate-ping opacity-20" />
+              )}
+            </div>
+            <span className={`font-mono text-[10px] tracking-[0.3em] uppercase transition-all duration-300 ${activeVariant === i ? 'text-white translate-x-2' : 'text-white/20 group-hover:text-white/60'}`}>
               {v.name}
             </span>
           </div>

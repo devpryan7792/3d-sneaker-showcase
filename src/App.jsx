@@ -13,31 +13,64 @@ import { VariantPicker } from './components/sections/VariantPicker'
 import { HorizontalFeatures } from './components/sections/HorizontalFeatures'
 import { CtaFooter } from './components/sections/CtaFooter'
 import { Loader } from './components/ui/Loader'
+import { AuthModal } from './components/ui/AuthModal'
+import { CartDrawer } from './components/ui/CartDrawer'
+import { insforge } from './utils/insforge'
+import { useStore } from './store/useStore'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 function App() {
   const lenis = useLenis(ScrollTrigger.update)
+  const { setUser, fetchCart } = useStore()
 
   useEffect(() => {
+    // Lenis / GSAP sync
     if (lenis) {
       gsap.ticker.add((time) => {
         lenis.raf(time * 1000)
       })
       gsap.ticker.lagSmoothing(0)
     }
+
+    // InsForge Auth Initialization
+    insforge.auth.getCurrentUser().then(({ data, error }) => {
+      if (data?.user) {
+        setUser(data.user, null)
+        fetchCart() // Load user's cart from DB
+      } else {
+        setUser(null, null)
+      }
+    })
+
     return () => {
       gsap.ticker.remove((time) => lenis?.raf(time * 1000))
     }
-  }, [lenis])
+  }, [lenis, setUser, fetchCart])
+
+  useGSAP(() => {
+    gsap.to('#progress-bar', {
+      scaleX: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: 'body',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.3
+      }
+    })
+  })
 
   return (
     <>
       <Loader />
+      <div className="scroll-progress" id="progress-bar" />
       <ReactLenis root options={{ lerp: 0.1, smoothWheel: true }}>
         <div className="grain-overlay" />
         <CustomCursor />
         <Navbar />
+        <AuthModal />
+        <CartDrawer />
         
         <SneakerCanvas />
         
